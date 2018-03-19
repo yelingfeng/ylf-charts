@@ -1,15 +1,16 @@
 {
     "name": "ylf-charts",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "the encapsulation two times of the framework based echarts",
-    "main": "src/index.js",
+    "main": "dist/ylfCharts.js",
     "scripts": {
         "dev": "vue-cli-service serve --open",
         "rollup": "rollup -c ./rollup.config.js",
         "uglify": "uglifyjs dist/ylfCharts.js -c -m -o dist/ylfCharts.min.js --source-map filename=dist/ylfCharts.min.js.map --in-source-map dist/ylfCharts.min.js.map --source-map-url ylfCharts.min.js.map --comments",
         "docs": "docute ./docs --port=3333 ",
         "test": "jest",
-        "build": "rimraf ./dist && npm run rollup && npm run uglify"
+        "build": "rimraf ./dist && npm run rollup && npm run uglify",
+        "release": "release-it major --preRelease=beta"
     },
     "author": "renxiaofan <yelingfeng521@gmail.com>",
     "license": "MIT",
@@ -39,6 +40,7 @@
         "less": "^3.0.1",
         "less-loader": "^4.1.0",
         "mockjs": "^1.0.1-beta3",
+        "release-it": "^7.2.1",
         "rimraf": "^2.6.2",
         "rollup": "^0.56.5",
         "rollup-plugin-buble": "^0.19.2",
