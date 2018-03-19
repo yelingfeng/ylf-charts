@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Vue CLI App</title>
+    <link rel="stylesheet" href="../lib/ylf-charts.css">
+    <style>
+        * {
+            margin:0;
+            padding:0;
+        }
+        #chart {
+            position: relative;
+            margin:10px auto;
+            width: 600px;
+            height: 400px;
+        }
+    </style>
+
+  </head>
+  <body>
+    <div id="app">
+        <div id="chart"></div>
+    </div>
+    <!-- <script src="./lib/echarts.min.js"></script>
+    <script src="./lib/lodash.min.js"></script> -->
+    <script src="https://cdn.bootcss.com/echarts/4.0.4/echarts.min.js"></script>
+    <script src="https://cdn.bootcss.com/lodash.js/4.17.5/lodash.min.js"></script>
+    <script src="../../dist/ylfCharts.js"></script>
+    <script>
+        function initChart(){
+            const mockData = [
+                {name : '星期一',value:'10'},
+                {name : '星期二',value:'30'},
+                {name : '星期三',value:'40'},
+                {name : '星期四',value:'60'},
+                {name : '星期五',value:'22'},
+            ]
+            const vm = new ylfCharts.Bar({
+                el :document.querySelector('#chart'),
+                sub:'base',
+                props:{
+                    specialProp:{
+                        bar: {
+                            width: '10',
+                            barBorderRadius: 5
+                        }
+                    }
+                },
+                onClick(arg){
+                    console.log(arg)
+                }
+            })
+            vm.render(mockData)
+            console.log(vm)
+        }
+        window.onload = function(){
+            initChart()
+        }
+    </script>
+  </body>
+</html>
