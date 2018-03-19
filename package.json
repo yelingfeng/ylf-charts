@@ -5,10 +5,11 @@
     "main": "src/index.js",
     "scripts": {
         "dev": "vue-cli-service serve --open",
-        "build": "rimraf ./dist && npm run rollup && npm run uglify",
         "rollup": "rollup -c ./rollup.config.js",
         "uglify": "uglifyjs dist/ylfCharts.js -c -m -o dist/ylfCharts.min.js --source-map filename=dist/ylfCharts.min.js.map --in-source-map dist/ylfCharts.min.js.map --source-map-url ylfCharts.min.js.map --comments",
-        "docs": "docute ./docs --port=3333 "
+        "docs": "docute ./docs --port=3333 ",
+        "test": "jest",
+        "build": "rimraf ./dist && npm run rollup && npm run uglify"
     },
     "author": "renxiaofan <yelingfeng521@gmail.com>",
     "license": "MIT",
