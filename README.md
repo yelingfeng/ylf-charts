@@ -1,5 +1,7 @@
 # ylf-charts
 
+[![Build Status](https://travis-ci.org/yelingfeng/ylf-charts.svg?branch=master)](https://travis-ci.org/yelingfeng/ylf-charts)
+
 > 基于 echarts 二次封装
 the encapsulation two times of the framework based echarts
 
