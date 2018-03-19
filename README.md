@@ -18,3 +18,7 @@ the encapsulation two times of the framework based echarts
 # Usage
 
 Please see  [full documentation]( https://yelingfeng.github.io/ylf-charts/).
+
+# LICENSE
+
+MIT
