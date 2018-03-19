@@ -36,6 +36,7 @@
         "babel-core": "^7.0.0-0",
         "babel-jest": "^22.0.4",
         "babel-plugin-external-helpers": "^6.22.0",
+        "element-ui": "^2.2.2",
         "eslint-config-yelingfeng": "0.0.4",
         "less": "^3.0.1",
         "less-loader": "^4.1.0",

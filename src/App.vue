@@ -1,49 +1,66 @@
 <template>
   <div id="box">
-    <h2>基础柱图</h2>
-    <chart ref="c" :options="opts"></chart>
+      <el-row>
+        <el-col :span="12">
+            <h2>基础柱图</h2>
+            <chart ref="c" :options="opts"></chart>
+        </el-col>
+        <el-col :span="12">
+            <h2>分组柱图</h2>
+            <chart ref="c2" :options="opts2"></chart>
+        </el-col>
+      </el-row>
+      <el-row>
+          <el-col :span="24">
+              <h2>排名柱图</h2>
+              <chart ref="c3" :options="opts3"></chart>
+          </el-col>
+      </el-row>
+      <el-row>
+          <el-col :span="24">
+              <h2>柱形折线图</h2>
+              <chart ref="c4" :options="opts4"></chart>
+          </el-col>
+      </el-row>
   </div>
 </template>
 
 <script>
 import chart from './common/chart.vue'
-import { normal } from './common/mockUtil'
+import { normal, normalGroup, names, categorys } from './common/mockUtil'
+import { initBarOption } from './common/op'
 export default {
     name: 'App',
     data() {
+        const ops = initBarOption()
         return {
-            opts: {
-                width: 600,
-                height: 400,
-                chartType: 'Bar',
-                childType: 'base',
-                props: {
-                    specialProp:{
-                        bar: {
-                            width: '10',
-                            // 圆角barBorderRadius Number
-                            barBorderRadius: 5,
-                            hoverColor: '#00ccff'
-                        }
-                    }
-                },
-                onClickHandler() {},
-                renderData:[
-                    {name : '星期一', value:'10'},
-                    {name : '星期二', value:'30'},
-                    {name : '星期三', value:'40'},
-                    {name : '星期四', value:'60'},
-                    {name : '星期五', value:'22'}
-                ]
-            }
+            opts: ops[0],
+            opts2:ops[1],
+            opts3:ops[2],
+            opts4:ops[3]
         }
     },
     mounted() {
-        const datas = normal().result
-        console.log(datas)
+        const base = normal().result
+        const groupData = normalGroup(40).result
+        const levelData =  normal(10, [{
+            'ordernum|+1': 1,
+            'name|+1': ['其他HTTP应用', '传统互联网应用', '下载工具', '网络游戏', '通用协议', '视频', '文件传输', '移动互联网VoIP业务', '即时通信', '终端控制'],
+            'value|+1': 1
+        }]).result
+        const multiData = normal(40, [{
+            'name|+1': names,
+            'value|10-100': 10,
+            'category|+1': categorys,
+            'type|1': ['bar', 'line'],
+            info: '@ctitle(10)'
+        }]).result
         setTimeout(() => {
-            this.$refs.c.loadData(datas)
-        }, 2000)
+            this.$refs.c.loadData(base)
+            this.$refs.c2.loadData(groupData)
+            this.$refs.c3.loadData(levelData)
+            this.$refs.c4.loadData(multiData)
+        }, 100)
     },
     components: {
         chart

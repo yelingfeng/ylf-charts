@@ -1,6 +1,6 @@
 
 /*
- * ylf-charts 0.0.1
+ * ylf-charts 1.0.0-beta.0
  * the encapsulation two times of the framework based echarts.
  * Copyright (c) 2018 RenXiaoFan <yelingfeng521@gmail.com>
  */
@@ -18767,8 +18767,10 @@ var BaseBar = (function (Bar$$1) {
     BaseBar.prototype = Object.create( Bar$$1 && Bar$$1.prototype );
     BaseBar.prototype.constructor = BaseBar;
     BaseBar.prototype.render = function render (data) {
-        Bar$$1.prototype.render.call(this, data);
-        this.create();
+        if(data){
+            Bar$$1.prototype.render.call(this, data);
+            this.create();
+        }
     };
     BaseBar.prototype.create = function create () {
         var option = this.barInjection(this.singleChartSetting());
@@ -18791,8 +18793,10 @@ var GroupBar = (function (Bar$$1) {
     GroupBar.prototype = Object.create( Bar$$1 && Bar$$1.prototype );
     GroupBar.prototype.constructor = GroupBar;
     GroupBar.prototype.render = function render (data) {
-        Bar$$1.prototype.render.call(this, data);
-        this.create();
+        if(data){
+            Bar$$1.prototype.render.call(this, data);
+            this.create();
+        }
     };
     GroupBar.prototype.create = function create () {
         var option = this.barInjection(this.groupChartSetting());
@@ -18815,8 +18819,10 @@ var LevelBar = (function (Bar$$1) {
     LevelBar.prototype = Object.create( Bar$$1 && Bar$$1.prototype );
     LevelBar.prototype.constructor = LevelBar;
     LevelBar.prototype.render = function render (data) {
-        Bar$$1.prototype.render.call(this, data);
-        this.create();
+        if(data){
+            Bar$$1.prototype.render.call(this, data);
+            this.create();
+        }
     };
     LevelBar.prototype.create = function create () {
         var option = this.barInjection(this.singleChartSetting());
@@ -18855,8 +18861,10 @@ var MultiBar = (function (Bar$$1) {
     MultiBar.prototype = Object.create( Bar$$1 && Bar$$1.prototype );
     MultiBar.prototype.constructor = MultiBar;
     MultiBar.prototype.render = function render (data) {
-        Bar$$1.prototype.render.call(this, data);
-        this.create();
+        if(data){
+            Bar$$1.prototype.render.call(this, data);
+            this.create();
+        }
     };
     MultiBar.prototype.create = function create () {
         var option = this.barInjection(this.groupChartSetting());
@@ -18864,12 +18872,15 @@ var MultiBar = (function (Bar$$1) {
     };
     MultiBar.prototype.classifyAxis = function classifyAxis (option) {
         option.yAxis[1] = this.cloneAxis(option.yAxis[0]);
+        option.yAxis[1].splitLine.show = false;
         option.series.forEach(function (item) {
             var data = item.data;
             if (data instanceof Array && data.length > 0) {
                 if (data[0].dataObj && data[0].dataObj.type === TYPE_LINE) {
                     item.type = 'line';
                     item.yAxisIndex = 1;
+                    item.smooth = true;
+                    console.log(item);
                 }
             }
         });
@@ -18892,8 +18903,10 @@ var PolarBar = (function (Bar$$1) {
     PolarBar.prototype = Object.create( Bar$$1 && Bar$$1.prototype );
     PolarBar.prototype.constructor = PolarBar;
     PolarBar.prototype.render = function render (data) {
-        Bar$$1.prototype.render.call(this, data);
-        this.create();
+        if(data){
+            Bar$$1.prototype.render.call(this, data);
+            this.create();
+        }
     };
     PolarBar.prototype.create = function create () {
         var option = this.barInjection(this.singleChartSetting());

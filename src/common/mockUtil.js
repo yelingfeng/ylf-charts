@@ -3,6 +3,10 @@ const names = ['苹果', '香蕉', '梨', '橙子', '樱桃', '西柚', '泥猴�
 const info = '@ctitle(10)'
 const categorys = ['A', 'B', 'C']
 
+export {
+    names, categorys
+}
+
 const format = date => {
     let dateString = new Date(date)
     let month =
