@@ -1,6 +1,6 @@
 {
     "name": "ylf-charts",
-    "version": "1.0.0-beta.1",
+    "version": "1.0.0-beta.2",
     "description": "the encapsulation two times of the framework based echarts",
     "main": "dist/ylfCharts.js",
     "scripts": {
