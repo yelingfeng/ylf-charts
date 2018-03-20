@@ -1,6 +1,5 @@
-<h1 align="center">ylf-charts</h1>
+<h1 align="left">ylf-charts</h1>
 
-[![npm](https://npmjs.com/package/ylf-charts)](https://npmjs.com/package/ylf-charts)
 [![Build Status](https://travis-ci.org/yelingfeng/ylf-charts.svg?branch=master)](https://travis-ci.org/yelingfeng/ylf-charts)
 
 > 基于 echarts 二次封装
