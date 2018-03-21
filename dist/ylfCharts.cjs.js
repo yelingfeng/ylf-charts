@@ -1,6 +1,6 @@
 
 /*
- * ylf-charts 1.0.0-beta.0
+ * ylf-charts 1.0.0-beta.2
  * the encapsulation two times of the framework based echarts.
  * Copyright (c) 2018 RenXiaoFan <yelingfeng521@gmail.com>
  */
@@ -56,9 +56,12 @@ var deepCopy = function (data) {
     return o
 };
 
-
 var isFunction = function (value) {
     return Object.prototype.toString.call(value) === '[object Function]';
+};
+
+var isArray = function (value) {
+    return Array.isArray ? Array.isArray : Object.prototype.toString.call(value) === '[object Array]'
 };
 
 /**
@@ -18391,8 +18394,8 @@ function getTooltip(config, props) {
     var ylUnit = getAxisProps(props, 'ylUnit');
     var yrUnit = getAxisProps(props, 'yrUnit');
     var trigger = config.trigger || 'item';
-    var toolTipProp = props.toolTipProp;
-    if(toolTipProp){
+    if(props && props.toolTipProp){
+        var toolTipProp = props.toolTipProp;
         var tipObj = {
             trigger: getTrigger(config),
             textStyle: getFontStyle(12, 'left'),
@@ -18603,7 +18606,7 @@ var AxisChart = (function (BasicClass$$1) {
     };
 
     /**
-     * [getChartsSettings 拼装echarts option对象]
+     * [getAxisSettings 拼装echarts option对象]
      * @param  {Array}  category
      * @param  {Array} xAxisData
      * @param  {Array}  series
@@ -18711,6 +18714,23 @@ var AxisChart = (function (BasicClass$$1) {
 var IS_STACK = '1';
 // 是否横向
 var IS_TRANSVERSE = '1';
+var defaultProp = {
+    // 宽度（设置后柱图为固定宽度，不设置 为自适应）series-> barWidth
+    width: '',
+    // 圆角barBorderRadius Number
+    barBorderRadius: 0,
+    // 是否堆积 series->stack
+    isStack: '0',
+    // 划过颜色 series ->itemStyle->emphasis->color
+    hoverColor: '#00ccff',
+    // 颜色集合 （配置后 全局忽略）
+    // 是否求和排序
+    isSumSort: '0',
+    // 排序顺序
+    orderType: '0',
+    // 是否横向
+    isTransverse: '0'
+};
 var Bar = (function (AxisChart$$1) {
     function Bar(op) {
         AxisChart$$1.call(this, op);
@@ -18728,8 +18748,8 @@ var Bar = (function (AxisChart$$1) {
     };
     Bar.prototype.barInjection = function barInjection (option) {
         var series = option.series;
-        var props = getSpecialProps(this.options.props, 'bar');
-        if (series instanceof Array) {
+        var props = getSpecialProps(this.options.props, 'bar') || defaultProp;
+        if (isArray(series)) {
             series.forEach(function (item) {
                 Object.assign(item, {
                     barWidth: props.width || '',
@@ -18880,7 +18900,6 @@ var MultiBar = (function (Bar$$1) {
                     item.type = 'line';
                     item.yAxisIndex = 1;
                     item.smooth = true;
-                    console.log(item);
                 }
             }
         });
@@ -18890,77 +18909,408 @@ var MultiBar = (function (Bar$$1) {
     return MultiBar;
 }(Bar));
 
-/**
- * Created by zhao on 2018/1/9.
- */
-var PolarBar = (function (Bar$$1) {
-    function PolarBar(op) {
-        Bar$$1.call(this, op);
-        this.name = 'PolarBar';
+// 平滑或者面积
+var TRUE = '1';
+var defaultProp$1 = {
+    smooth: '1',
+    // 空心圈 还是实心点  'circle', 'rect', 'roundRect', 'triangle', 'diamond', 'pin', 'arrow'
+    symbol: 'circle',
+    // 大小
+    symbolSize: 8,
+    // 是否显示堆积
+    isStack: '0',
+    // 是否显示面积
+    isArea: '1'
+};
+var Line = (function (AxisChart$$1) {
+    function Line(op) {
+        AxisChart$$1.call(this, op);
+        this.initLine();
     }
 
-    if ( Bar$$1 ) PolarBar.__proto__ = Bar$$1;
-    PolarBar.prototype = Object.create( Bar$$1 && Bar$$1.prototype );
-    PolarBar.prototype.constructor = PolarBar;
-    PolarBar.prototype.render = function render (data) {
-        if(data){
-            Bar$$1.prototype.render.call(this, data);
-            this.create();
+    if ( AxisChart$$1 ) Line.__proto__ = AxisChart$$1;
+    Line.prototype = Object.create( AxisChart$$1 && AxisChart$$1.prototype );
+    Line.prototype.constructor = Line;
+    Line.prototype.initLine = function initLine () {
+        this.__chartName__ = 'line';
+    };
+    Line.prototype.render = function render (data) {
+        AxisChart$$1.prototype.render.call(this, data);
+    };
+    Line.prototype.lineInjection = function lineInjection (option) {
+        var series = option.series;
+        var props = getSpecialProps(this.options.props, 'line') || defaultProp$1;
+        if (isArray(series)) {
+            series.forEach(function (item) {
+                Object.assign(item, {
+                    stack: props.isStack === TRUE,
+                    smooth: props.smooth === TRUE,
+                    areaStyle: {
+                        normal: {
+                            opacity: props.isArea === TRUE ? 0.5 : 0
+                        }
+                    },
+                    symbol: props.symbol,
+                    symbolSize: props.symbolSize
+                });
+            });
         }
-    };
-    PolarBar.prototype.create = function create () {
-        var option = this.barInjection(this.singleChartSetting());
-        this.build(this.polarAxis(option));
-    };
-    PolarBar.prototype.polarAxis = function polarAxis (option) {
-        var obj = {
-            angleAxis: {
-                type: 'category',
-                boundaryGap: false,
-                data: (function() {
-                    var data = [];
-                    for (var i = 0; i < 12; ++i) {
-                        data.push(2 * i + '点');
-                    }
-                    return data
-                })(),
-                axisTick: {
-                    show: false
-                },
-                z: 10
-            },
-            radiusAxis: {
-                max: function (val) {
-                    return val.max * 1.2
-                },
-                axisLine: {
-                    lineStyle: {
-                        color: 'rgba(0, 0, 0, 0)'
-                    }
-                }
-            },
-            polar: {}
-        };
-        delete option.yAxis;
-        delete option.xAxis;
-        option.series[0].coordinateSystem = 'polar';
-        return Object.assign(option, obj)
+        return option
     };
 
-    return PolarBar;
-}(Bar));
+    return Line;
+}(AxisChart));
+
+/**
+ * Created by zhao on 2017/12/18.
+ */
+var BaseLine = (function (Line$$1) {
+    function BaseLine(op) {
+        Line$$1.call(this, op);
+        this.name = 'BaseLine';
+    }
+
+    if ( Line$$1 ) BaseLine.__proto__ = Line$$1;
+    BaseLine.prototype = Object.create( Line$$1 && Line$$1.prototype );
+    BaseLine.prototype.constructor = BaseLine;
+    BaseLine.prototype.render = function render (data) {
+        Line$$1.prototype.render.call(this, data);
+        this.create();
+    };
+    BaseLine.prototype.create = function create () {
+        var option = this.lineInjection(this.singleChartSetting());
+        if(Object.keys(option.tooltip).length === 0){
+            delete option.tooltip;
+        }
+        this.build(option);
+    };
+
+    return BaseLine;
+}(Line));
+
+/**
+ * Created by zhao on 2017/12/18.
+ */
+var GroupLine = (function (Line$$1) {
+    function GroupLine(op) {
+        Line$$1.call(this, op);
+        this.name = 'GroupLine';
+    }
+
+    if ( Line$$1 ) GroupLine.__proto__ = Line$$1;
+    GroupLine.prototype = Object.create( Line$$1 && Line$$1.prototype );
+    GroupLine.prototype.constructor = GroupLine;
+    GroupLine.prototype.render = function render (data) {
+        Line$$1.prototype.render.call(this, data);
+        this.create();
+    };
+    GroupLine.prototype.create = function create () {
+        var option = this.lineInjection(this.groupChartSetting());
+        this.build(option);
+    };
+
+    return GroupLine;
+}(Line));
+
+/**
+ * Created by zhao on 2018/1/8.
+ */
+var MultiLine = (function (Line$$1) {
+    function MultiLine(op) {
+        Line$$1.call(this, op);
+        this.name = 'MultiLine';
+    }
+
+    if ( Line$$1 ) MultiLine.__proto__ = Line$$1;
+    MultiLine.prototype = Object.create( Line$$1 && Line$$1.prototype );
+    MultiLine.prototype.constructor = MultiLine;
+    MultiLine.prototype.render = function render (data) {
+        Line$$1.prototype.render.call(this, data);
+        this.create();
+    };
+    MultiLine.prototype.create = function create () {
+        var option = this.lineInjection(this.groupChartSetting());
+        this.build(this.classifyAxis(option));
+    };
+    MultiLine.prototype.classifyAxis = function classifyAxis (option) {
+        option.yAxis[1] = this.cloneAxis(option.yAxis[0]);
+        option.series[1].yAxisIndex = 1;
+        return option
+    };
+
+    return MultiLine;
+}(Line));
+
+/**
+ * Created by zhao on 2018/1/8.
+ */
+var UpDownLine = (function (Line$$1) {
+    function UpDownLine(op) {
+        Line$$1.call(this, op);
+        this.name = 'UpDownLine';
+    }
+
+    if ( Line$$1 ) UpDownLine.__proto__ = Line$$1;
+    UpDownLine.prototype = Object.create( Line$$1 && Line$$1.prototype );
+    UpDownLine.prototype.constructor = UpDownLine;
+    UpDownLine.prototype.render = function render (data) {
+        Line$$1.prototype.render.call(this, data);
+        this.create();
+    };
+    UpDownLine.prototype.create = function create () {
+        var option = this.lineInjection(this.groupChartSetting());
+        if (option.series.length > 0) { option = this.upDownHandle(option); }
+        this.build(option);
+    };
+    UpDownLine.prototype.changeSeries = function changeSeries (series) {
+        var up = [];
+        var down = [];
+        var upstack = [];
+        var downstack = [];
+        var Arr = [up, down, upstack, downstack];
+        var result = [];
+        var data = [];
+        series.forEach(function (item) {
+            data = data.concat(item.data);
+        });
+        data.forEach(function (item) {
+            switch (item.dataObj.type) {
+                case 'up':
+                    up.push(item);
+                    break
+                case 'down':
+                    down.push(item);
+                    break
+                case 'upstack':
+                    upstack.push(item);
+                    break
+                case 'downstack':
+                    downstack.push(item);
+                    break
+                default:
+                    break
+            }
+        });
+        Arr.forEach(function (item) {
+            series.forEach(function (sItem) {
+                if (item[0].dataObj.category === sItem.name) {
+                    var obj = lodash.cloneDeep(sItem);
+                    obj.data = item;
+                    result.push(obj);
+                }
+            });
+        });
+        return result
+    };
+    UpDownLine.prototype.upDownHandle = function upDownHandle (option) {
+        option.series = this.changeSeries(option.series);
+        option.yAxis[0].axisLabel.formatter = function (value) {
+            return Math.abs(value)
+        };
+        option.yAxis[1] = this.cloneAxis(option.yAxis[0]);
+        option.series.forEach(function (item) {
+            var dataObj = item.data instanceof Array ? item.data[0].dataObj : {};
+            if (dataObj.type === 'upstack' || dataObj.type === 'downstack') {
+                item.smooth = true;
+                item.areaStyle.normal = {
+                    opacity: 0.5
+                };
+            }
+            if (dataObj.type === 'down' || dataObj.type === 'downstack') {
+                item.data.forEach(function (dItem) {
+                    dItem.value = -dItem.value;
+                });
+            }
+        });
+        return option
+    };
+
+    return UpDownLine;
+}(Line));
+
+// 是否显示提示线，文字
+var TRUE$1 = '1';
+var defaultProp$2 = {
+    // 是否切换环图
+    'isRing': '1',
+    // 内环半径
+    'innerRadius': '30',
+    // 外环半径
+    'outerRadius': '70',
+    // 是否显示提示线  series->labelLine-> normal-> show
+    'isLabelLine': '1',
+    // 保加利亚玫瑰图 series ->roseType
+    'roseType': '0',
+    'proportion': '0',
+    'isLabel': '1',
+    'centerX': '50',
+    'centerY': '50',
+    // 是否轮播
+    'isCarousel': '0',
+    // 轮播饼图，轮播时长
+    'carouselTime': '1'
+    // 'circleColor': ['#01f37e', '#00a8ff', '#fb6e12', '#00e5ff']
+};
+var Pie = (function (BasicClass$$1) {
+    function Pie(op) {
+        BasicClass$$1.call(this, op);
+        this.initPie();
+    }
+
+    if ( BasicClass$$1 ) Pie.__proto__ = BasicClass$$1;
+    Pie.prototype = Object.create( BasicClass$$1 && BasicClass$$1.prototype );
+    Pie.prototype.constructor = Pie;
+    Pie.prototype.initPie = function initPie () {
+        this.__chartName__ = 'pie';
+    };
+    Pie.prototype.render = function render (d) {
+        BasicClass$$1.prototype.render.call(this, d);
+    };
+    /**
+     * [pieChartSetting 单图构建 饼图的基本option]
+     * @return {[type]} [description]
+     */
+    Pie.prototype.pieChartSetting = function pieChartSetting () {
+        var ref = getNormalSeriesObj(this.originData, this.__chartName__);
+        var seriesObj = ref.seriesObj;
+        return this.getChartsSettings([seriesObj], 'item')
+    };
+
+    Pie.prototype.pieInjection = function pieInjection (option) {
+        var series = option.series;
+        this.sProps = getSpecialProps(this.options.props, 'pie') || defaultProp$2;
+        var me = this;
+        if (isArray(series)) {
+            series.forEach(function (item) {
+                Object.assign(item, {
+                    radius: [me.sProps.innerRadius + '%', me.sProps.outerRadius + '%'],
+                    label: {
+                        normal: {
+                            show: me.sProps.isLabel === TRUE$1
+                        }
+                    },
+                    labelLine: {
+                        normal: {
+                            show: me.sProps.isLabelLine === TRUE$1
+                        }
+                    },
+                    center: [me.sProps.centerX + '%', me.sProps.centerY + '%']
+                });
+            });
+        }
+        return option
+    };
+
+    Pie.prototype.built = function built () {
+        if (this.sProps.isCarousel === TRUE$1) { this.carousel(); }
+    };
+
+    // 控制轮播
+    Pie.prototype.carousel = function carousel () {
+        var this$1 = this;
+
+        var i = 0;
+        clearInterval(this.EC.timeLong);
+        this.EC.timeLong = setInterval(function () {
+            // 高亮
+            this$1.EC.dispatchAction({
+                type: 'highlight',
+                seriesIndex: 0,
+                dataIndex: i
+            });
+            // 选中后事件
+            this$1.EC.dispatchAction({
+                type: 'showTip',
+                seriesIndex: 0,
+                dataIndex: i
+            });
+            // 取消高亮
+            this$1.EC.dispatchAction({
+                type: 'downplay',
+                seriesIndex: 0,
+                dataIndex: i - 1 >= 0 ? i - 1 : this$1.originData.length - 1
+            });
+            i++;
+            if (i >= this$1.originData.length) { i = 0; }
+        }, this.sProps.carouselTime * 1000);
+    };
+
+    return Pie;
+}(BasicClass));
+
+/**
+ * Created by zhao on 2017/12/18.
+ */
+var BasePie = (function (Pie$$1) {
+    function BasePie(op) {
+        Pie$$1.call(this, op);
+        this.name = 'BasePie';
+    }
+
+    if ( Pie$$1 ) BasePie.__proto__ = Pie$$1;
+    BasePie.prototype = Object.create( Pie$$1 && Pie$$1.prototype );
+    BasePie.prototype.constructor = BasePie;
+    BasePie.prototype.render = function render (data) {
+        Pie$$1.prototype.render.call(this, data);
+        this.create();
+    };
+    BasePie.prototype.create = function create () {
+        var option = this.pieInjection(this.pieChartSetting());
+        this.build(option);
+    };
+
+    return BasePie;
+}(Pie));
+
+/**
+ * Created by zhao on 2017/12/28.
+ */
+var RosePie = (function (Pie$$1) {
+    function RosePie(op) {
+        Pie$$1.call(this, op);
+        this.name = 'RosePie';
+    }
+
+    if ( Pie$$1 ) RosePie.__proto__ = Pie$$1;
+    RosePie.prototype = Object.create( Pie$$1 && Pie$$1.prototype );
+    RosePie.prototype.constructor = RosePie;
+    RosePie.prototype.render = function render (data) {
+        Pie$$1.prototype.render.call(this, data);
+        this.create();
+    };
+    RosePie.prototype.create = function create () {
+        var option = this.pieInjection(this.pieChartSetting());
+        this.build(this.getSpecial(option));
+    };
+    RosePie.prototype.getSpecial = function getSpecial (option) {
+        if (option.series[0]) { option.series[0].roseType = true; }
+        return option
+    };
+
+    return RosePie;
+}(Pie));
 
 var ylfCharts = {
     Bar: BaseBar,
     GroupBar: GroupBar,
     LevelBar: LevelBar,
     MultiBar: MultiBar,
-    PolarBar: PolarBar
+    Line: BaseLine,
+    GroupLine: GroupLine,
+    MultiLine: MultiLine,
+    UpDownLine: UpDownLine,
+    Pie: BasePie,
+    RosePie: RosePie
 };
 
 exports.Bar = BaseBar;
 exports.GroupBar = GroupBar;
 exports.LevelBar = LevelBar;
 exports.MultiBar = MultiBar;
-exports.PolarBar = PolarBar;
+exports.Line = BaseLine;
+exports.GroupLine = GroupLine;
+exports.MultiLine = MultiLine;
+exports.UpDownLine = UpDownLine;
+exports.Pie = BasePie;
+exports.RosePie = RosePie;
 exports.default = ylfCharts;

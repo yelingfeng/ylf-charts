@@ -4,6 +4,13 @@
 
 基于 echarts 二次封装 ，简单、方便、实用、数据格式对后端友好
 
+## Features
+
+- 简单、方便、快速上手, 不需要太关注echarts本身的属性
+- 友好的数据格式支持, 一条SQL就可以映射数据
+- AMD、CommonJS、UMD、ES6 多模块支持
+
+
 ## Quick Start
 
 ### Browser

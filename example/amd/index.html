@@ -9,18 +9,26 @@
             margin:0;
             padding:0;
         }
-        #chart {
+        .box {
             position: relative;
             margin:10px auto;
+            width:1000px;
+        }
+        .chart {
             width: 600px;
             height: 400px;
+            margin:5px;
         }
     </style>
 
   </head>
   <body>
     <div id="app">
-        <div id="chart"></div>
+        <div class="box">
+            <div id="chart"  class="chart"></div>
+            <div id="chart2" class="chart"></div>
+        </div>
+
     </div>
     <script src="../lib/require.min.js" data-main="./config.js"></script>
   </body>

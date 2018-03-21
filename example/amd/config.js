@@ -35,4 +35,10 @@ define(['ylfCharts'], function(ylfCharts){
         }
     })
     vm.render(mockData)
+
+    const pie = new ylfCharts.Pie({
+        el :document.querySelector('#chart2'),
+        sub:'base'
+    })
+    pie.render(mockData)
 })

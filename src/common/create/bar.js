@@ -1,5 +1,5 @@
-import { Bar, GroupBar, LevelBar, MultiBar} from '../../lib/index'
-import { BAR_TYPE as BarTypes } from './constant'
+import { Bar, GroupBar, LevelBar, MultiBar} from '../../../lib/index'
+import { BAR_TYPE as BarTypes } from '@/util/constant'
 /**
  * [createBar description]
  * @param  {[type]} childType 三级类型

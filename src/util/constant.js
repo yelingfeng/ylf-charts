@@ -43,3 +43,33 @@ export const BAR_TYPE = {
     // 基础横向柱图
     BASE_LEVEL: 'baseLevel'
 }
+
+// 折线图类型
+export const LINE_TYPE = {
+    // 基础
+    BASE: 'base',
+    // 分组
+    GROUP: 'group',
+    // 多分组面积图
+    GROUP_AREA: 'groupArea',
+    // 双坐标分组折线图
+    MULTI_AXIS: 'multiAxis',
+    // 上下折线图
+    ZLD_UPDOWN: 'lineUpDown',
+    // 定制上下折线图
+    ZLD_SUPDOWN: 'lineUpDown2'
+}
+
+// 饼图类型
+export const PIE_TYPE = {
+    // 基础
+    BASE: 'base',
+    // 环形图
+    CIRCULAR: 'circular',
+    // 玫瑰图
+    ROSE: 'rose',
+    // 极坐标玫瑰图
+    WINDROSE: 'windrose',
+    // 轮播饼图
+    PIE_CAROUSEL: 'pieCarousel'
+}

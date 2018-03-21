@@ -4,7 +4,6 @@ import qs from 'qs'
 const SUCCESS = '1'
 const ERROR = '0'
 
-console.log(process.env)
 const service = axios.create({
     baseURL: process.env.VUE_APP_MOCK_URL,
     timeout: 180000

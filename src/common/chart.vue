@@ -4,7 +4,7 @@
 
 <script>
 import _ from 'lodash'
-import { initChart } from './loadChart'
+import { initChart } from '@/util/loadChart'
 export default {
     name: 'chart',
     props: {
@@ -37,7 +37,9 @@ export default {
             onClick
         }
         this.$compChart = initChart(chartType, childType, options)
-        this.$compChart.render(this.options.renderData)
+        if(this.options.renderData && this.options.renderData.length){
+            this.$compChart.render(this.options.renderData)
+        }
     },
     computed: {
         chartStyle() {

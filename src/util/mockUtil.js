@@ -20,7 +20,7 @@ const format = date => {
     return dateString.getFullYear() + '-' + month + '-' + day
 }
 
-const rangeDate = (min, max) => {
+export  const rangeDate = (min, max) => {
     let days = (new Date(max) - new Date(min)) / 1000 / 60 / 60 / 24
     let i = 0
     let len = Math.floor(days)
